@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { RecordItem, RecordStatus } from "@/app/interview/types";
 
 // Sample dataset. Feel free to extend with more realistic examples.
-let records: RecordItem[] = [
+const records: RecordItem[] = [
   {
     id: "1",
     name: "Anopheles gambiae ♀",

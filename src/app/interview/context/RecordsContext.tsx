@@ -9,6 +9,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { RecordItem, RecordStatus, RecordHistoryEntry } from '../types';
+import { recordsApi } from '../services/recordsApi';
 
 interface RecordsContextValue {
   records: RecordItem[];
@@ -50,12 +51,8 @@ export function RecordsProvider({ children }: { children: React.ReactNode }) {
     setBusy(true);
     setErr(null);
     try {
-      const response = await fetch('/api/mock/records');
-      if (!response.ok) {
-        throw new Error(`Failed to load records: ${response.statusText}`);
-      }
-      const incoming = (await response.json()) as RecordItem[];
-      setData(incoming);
+      const records = await recordsApi.fetchAll();
+      setData(records);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       setErr(message);
@@ -71,15 +68,7 @@ export function RecordsProvider({ children }: { children: React.ReactNode }) {
   const doUpdate = useCallback(async (id: string, updates: { status?: RecordStatus; note?: string }) => {
     setErr(null);
     try {
-      const response = await fetch('/api/mock/records', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...updates }),
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to update record: ${response.statusText}`);
-      }
-      const updated = (await response.json()) as RecordItem;
+      const updated = await recordsApi.update(id, updates);
       setData((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
 
       const prevRecord = data.find((r) => r.id === id);
