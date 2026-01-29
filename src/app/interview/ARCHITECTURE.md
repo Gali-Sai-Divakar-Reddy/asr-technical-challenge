@@ -109,7 +109,8 @@ const prevRecord = data.find((r) => r.id === id); // Uses stale 'data'
 - Function recreates when `data` changes (line 101: `}, [data])`)
 - Potential race conditions
 
-**Solution:** Use functional state updates to capture current state.
+**Solution:** Capture the latest records state via a `useRef` snapshot to avoid stale closures inside async callbacks.  
+This keeps the update function referentially stable while ensuring history entries are derived from the most recent state.
 
 ### 4. Code Duplication
 
