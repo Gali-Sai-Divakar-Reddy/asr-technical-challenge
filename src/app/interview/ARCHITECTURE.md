@@ -126,20 +126,21 @@ This keeps the update function referentially stable while ensuring history entri
 - Maintenance burden
 - Existing components are unused
 
-**Solution:** Use existing components instead of inline implementations (Phase 2).
+**Solution:** Replace inline UI with `RecordFilter`, `RecordSummary`, and `HistoryLog` components.
+Remaining: deeper UX + validation + save wiring stays in Phase 2.
 
 ### 5. Feature Logic Present but Not Wired
 
 **Problem:** 
-- Filter state exists but is not applied
+- Filter wired using `useFilteredRecords`
 - Save button exists without handler
 
 **Impact:**
-- Filter functionality doesn't work
+- Filter functionality works after wiring using `useFilteredRecords`.
 - Save functionality doesn't work
 
 **Solution:** 
-- Implement filtering logic (Phase 2 - will use `useFilteredRecords` hook).
+- Filter (Phase 1): Wired filtering via `useFilteredRecords`.
 - Add save handler and validation (Phase 2).
 
 ### 6. Abbreviated Variable Names
@@ -170,9 +171,10 @@ const [fltr, setFltr] = useState(...); // Should be: filterStatus
 - Extract service layer for API calls
 - Fix naming inconsistencies
 - Fix stale closure bug
-- Create hooks for derived state (prepared for Phase 2)
+- Created hooks for derived state
+- Integrate derived hooks + extracted components into RecordList
 - Improve code organization
-- Filter functionality deferred to Phase 2
+- Filter functionality
 - Save functionality deferred to Phase 2
 - Integrating existing components deferred to Phase 2
 
@@ -181,7 +183,7 @@ const [fltr, setFltr] = useState(...); // Should be: filterStatus
 1. **Extract Service Layer** - Isolate API calls
 2. **Fix Naming** - Consistent internal/external names
 3. **Fix Stale Closure** - Use functional updates
-4. **Create Derived State Hooks** - Prepare for Phase 2
+4. **Create Derived State Hooks** - Use in RecordList to replace inline derived computations
 5. **Improve Comments** - Clarify responsibilities
 
 ---

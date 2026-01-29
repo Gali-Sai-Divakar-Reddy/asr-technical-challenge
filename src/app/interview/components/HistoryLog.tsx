@@ -1,4 +1,4 @@
-import { useRecords } from "../context/RecordsContext";
+import type { RecordHistoryEntry } from "../types";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -8,18 +8,23 @@ import { Button } from "@/components/ui/button";
  * optional reviewer note to aid traceability. A Clear action is provided to
  * reset the in‑memory log.
  */
-export default function HistoryLog() {
-  const { history, clearHistory } = useRecords();
+interface HistoryLogProps {
+  history: RecordHistoryEntry[];
+  onClear: () => void;
+}
+
+export default function HistoryLog({ history, onClear }: HistoryLogProps) {
   return (
     <div className="space-y-3 mt-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">History</h3>
         {history.length > 0 && (
-          <Button variant="ghost" size="sm" onClick={clearHistory}>
+          <Button variant="ghost" size="sm" onClick={onClear}>
             Clear
           </Button>
         )}
       </div>
+
       {history.length === 0 ? (
         <p className="text-muted-foreground text-sm">No status changes yet.</p>
       ) : (
