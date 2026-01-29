@@ -7,6 +7,7 @@ import type { RecordItem } from "../types";
 import RecordCard from "./RecordCard";
 import RecordDetailDialog from "./RecordDetailDialog";
 import { Button } from "@/components/ui/button";
+import { useFilteredRecords } from "../hooks/useFilteredRecords";
 
 /**
  * RecordList orchestrates the interview page by fetching records via
@@ -15,20 +16,20 @@ import { Button } from "@/components/ui/button";
  */
 export default function RecordList() {
   const { records, loading, error, refresh, history } = useRecords();
-  const [sel, setSel] = useState<RecordItem | null>(null);
-  const [fltr, setFltr] = useState<"all" | RecordItem["status"]>("all");
+  const [selectedRecord, setSelectedRecord] = useState<RecordItem | null>(null);
+  const [filterStatus, setFilterStatus] = useState<"all" | RecordItem["status"]>("all");
 
-  const counts: Record<RecordItem["status"], number> = {
+  const statusCounts: Record<RecordItem["status"], number> = {
     pending: 0,
     approved: 0,
     flagged: 0,
     needs_revision: 0,
-  };
+  };  
   records.forEach((item) => {
-    counts[item.status] += 1;
+    statusCounts[item.status] += 1;
   });
 
-  const display = records;
+  const visibleRecords = useFilteredRecords(records, filterStatus);
 
   return (
     <div className="space-y-6">
@@ -38,7 +39,7 @@ export default function RecordList() {
             Records
           </h2>
           <p className="text-sm text-muted-foreground">
-            {records.length} total • {display.length} showing
+            {records.length} total • {visibleRecords.length} showing
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
@@ -47,17 +48,17 @@ export default function RecordList() {
               Filter by status
             </label>
             <select
-              value={fltr}
+              value={filterStatus}
               onChange={(e) =>
-                setFltr(e.target.value as "all" | RecordItem["status"])
+                setFilterStatus(e.target.value as "all" | RecordItem["status"])
               }
               className="w-full border rounded-md p-2 text-sm bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <option value="all">all</option>
-              <option value="pending">pending</option>
-              <option value="approved">approved</option>
-              <option value="flagged">flagged</option>
-              <option value="needs_revision">needs_revision</option>
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="flagged">Flagged</option>
+              <option value="needs_revision">Needs Revision</option>
             </select>
           </div>
           <Button variant="ghost" onClick={() => refresh()} disabled={loading}>
@@ -70,26 +71,29 @@ export default function RecordList() {
         <p className="text-sm text-muted-foreground">Loading records...</p>
       )}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-        {(Object.keys(counts) as Array<keyof typeof counts>).map((status) => (
+        {(Object.keys(statusCounts) as Array<keyof typeof statusCounts>).map((status) => (
           <div
             key={status}
             className="rounded-lg border bg-card/50 p-3 sm:p-4 flex flex-col items-center justify-center capitalize shadow-sm hover:bg-card transition-colors"
           >
             <span className="text-xs sm:text-sm text-muted-foreground">
-              {status.replace("_", " ")}
+              {status.replaceAll("_", " ")}
             </span>
             <span className="text-lg sm:text-xl font-semibold tracking-tight">
-              {counts[status]}
+              {statusCounts[status]}
             </span>
           </div>
         ))}
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {display.map((record) => (
-          <RecordCard key={record.id} record={record} onSelect={setSel} />
+        {visibleRecords.map((record) => (
+          <RecordCard key={record.id} record={record} onSelect={setSelectedRecord} />
         ))}
       </div>
-      {sel && <RecordDetailDialog record={sel} onClose={() => setSel(null)} />}
+      {visibleRecords.length === 0 && records.length > 0 && !loading && !error && (
+        <p className="text-sm text-muted-foreground">No records match this filter.</p>
+      )}
+      {selectedRecord && <RecordDetailDialog record={selectedRecord} onClose={() => setSelectedRecord(null)} />}
       {records.length === 0 && !loading && !error && (
         <p className="text-sm text-muted-foreground">No records found.</p>
       )}
