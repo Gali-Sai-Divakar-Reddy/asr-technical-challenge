@@ -134,37 +134,43 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ### 5. Tests
 
-**Status**: ⏳ Not Started
+**Status**: ✅ Done
 
 **Definition of Done**: Unit tests cover update/validation logic, component tests verify dialog interactions and state propagation, filter test ensures correctness after updates.
 
 #### Unit Tests
 
-**Status**: ⏳ Not Started
+**Status**: ✅ Done
 
 **Tasks**:
-- [ ] Test successful update state transition
-- [ ] Test validation failure preventing persistence (Flagged/Needs Revision without note)
-- [ ] Test note optional for Approved status
-- [ ] Test API error handling
+- [x] Test successful update state transition
+- [x] Test validation failure preventing persistence (Flagged/Needs Revision without note)
+- [x] Test note optional for Approved status
+- [x] Test API error handling
 
-**Files to create**:
-- `src/__tests__/RecordDetailDialog.spec.tsx` (or similar)
+**Files created**:
+- `src/__tests__/RecordDetailDialog.spec.tsx`
 
 #### Component Tests
 
-**Status**: ⏳ Not Started
+**Status**: ✅ Done
 
 **Tasks**:
-- [ ] Test dialog interactions: status selection + note entry
-- [ ] Test validation messaging for missing notes
-- [ ] Test mocked successful save
-- [ ] Verify list/summary/history reflect changes after save
-- [ ] Test filter behavior correctness after update
+- [x] Test dialog interactions: status selection + note entry
+- [x] Test validation messaging for missing notes
+- [x] Test mocked successful save
+- [x] Verify list/summary/history reflect changes after save
+- [x] Test filter behavior correctness after update
 
-**Files to create**:
-- `src/__tests__/RecordDetailDialog.spec.tsx`
-- Possibly extend `src/__tests__/RecordCard.spec.tsx`
+**Files created**:
+- `src/__tests__/RecordDetailDialog.spec.tsx` (component-level tests)
+- `src/__tests__/RecordList.integration.spec.tsx` (integration tests)
+
+**Notes**:
+- Component-level tests in `RecordDetailDialog.spec.tsx` test dialog in isolation with mocked context
+- Integration tests in `RecordList.integration.spec.tsx` test full flow with real RecordsProvider and mocked API
+- Integration tests verify state propagation: list updates, summary counts update, history entries created
+- Filter behavior tests verify records are correctly shown/hidden when status changes
 
 #### Hook Tests (Optional)
 
@@ -186,19 +192,6 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ---
 
-## Implementation Log
-
-### [Date] - Started Phase 2
-- Created implementation plan
-- Created this tracking document
-
-### [Date] - [Task Name]
-- [What was done]
-- [Issues encountered]
-- [Next steps]
-
----
-
 ## Notes & Decisions
 
 ### Design Decisions
@@ -207,10 +200,7 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 - **Loading States**: Loading state managed in RecordDetailDialog during API calls
 - **History Ordering**: **Decided** - Prepend in context (`setHistory(prev => [entry, ...prev])`) for cleaner implementation
 
-
-### Issues & Solutions
-- [Issue description]
-  - Solution: [Solution description]
+---
 
 ### Future Considerations
 - Production history persistence strategy
@@ -225,7 +215,7 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 - [x] **Filter**: Reliable filtering, persists after updates, clear default, accessible
 - [x] **Summary**: Accurate counts, reactive updates, handles empty states
 - [x] **History**: Entries created on status change, readable format, scrollable, clearable
-- [ ] **Tests**: Unit tests for update/validation, component tests for dialog interactions, filter test
+- [x] **Tests**: Unit tests for update/validation, component tests for dialog interactions, filter test
 
 ---
 
