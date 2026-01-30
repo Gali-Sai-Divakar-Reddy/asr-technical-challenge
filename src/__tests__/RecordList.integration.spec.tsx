@@ -190,8 +190,19 @@ describe("RecordList Integration Tests", () => {
 
       // Verify history entry created
       await waitFor(() => {
-        expect(screen.getByText(/Record 1/i)).toBeInTheDocument();
-        expect(screen.getByText(/pending → approved/i)).toBeInTheDocument();
+        const recordText = screen.getByText(/Record 1/i);
+        expect(recordText).toBeInTheDocument();
+        
+        // Status transition is now split across badges and icon in HistoryLog
+        // Find the history entry container and verify it contains both status badges
+        const historyEntry = recordText.closest('li');
+        expect(historyEntry).toBeInTheDocument();
+        
+        // Check that both status badges exist within the history entry
+        const badges = historyEntry?.querySelectorAll('[data-slot="badge"]');
+        const badgeTexts = Array.from(badges || []).map(badge => badge.textContent?.toLowerCase() || '');
+        expect(badgeTexts).toContain('pending');
+        expect(badgeTexts).toContain('approved');
       });
     });
 
@@ -308,7 +319,7 @@ describe("RecordList Integration Tests", () => {
       // Verify record is removed from filtered view
       await waitFor(() => {
         expect(screen.queryByText("Specimen A")).not.toBeInTheDocument();
-        expect(screen.getByText("No records match this filter.")).toBeInTheDocument();
+        expect(screen.getByText("No records match this filter")).toBeInTheDocument();
       });
 
       // Verify record still exists when filter is "all"

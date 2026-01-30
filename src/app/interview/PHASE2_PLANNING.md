@@ -224,3 +224,63 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 - [ ] Server-side pagination
 - [ ] Optimistic concurrency with version conflict handling
 
+---
+
+## UI/UX Improvements
+
+### RecordList States (Loading/Error/Empty) - ✅ Done
+
+**Changes**:
+- **Loading**: Added 6 skeleton cards matching grid layout (improves perceived performance, prevents layout shift)
+- **Error**: Bordered container with AlertCircle icon, destructive colors, and "Try again" button
+- **Empty States**: Centered containers with icons (SearchX for filter empty, FileX for complete empty) and helpful messages
+
+**Design Choices**:
+- Uses existing theme colors (muted, destructive) - no new color palette
+- Visual-only changes - no behavior modifications
+- Uses lucide-react icons (already in dependencies)
+- Maintains accessibility and responsive design
+
+### RecordCard Hover + Focus Styles - ✅ Done
+
+**Changes**:
+- Added hover shadow and border color change
+- Added focus ring for keyboard navigation
+- Added cursor pointer and smooth transitions
+- Made card keyboard accessible with Enter/Space support
+
+**Design Choices**:
+- Uses existing theme colors
+- Visual-only changes, no behavior modifications
+- Improves accessibility for keyboard users
+- Smooth transitions enhance interactivity
+
+### HistoryLog Empty + Entry UI/UX Polish - ✅ Done
+
+**Changes**:
+- Added Clock icon and centered layout for empty state
+- Replaced text statuses with Badge components
+- Added ArrowRight icon between status transitions
+- Added FileText icon for notes
+- Improved spacing and hover effects
+
+**Design Choices**:
+- Consistent with RecordCard badge styling
+- Visual-only changes, no behavior modifications
+- Empty state matches RecordList pattern
+- Icons improve visual communication
+
+### RecordSummary UI/UX Polish - ✅ Done
+
+**Changes**:
+- Added Badge components for status display
+- Added status icons (Clock, CheckCircle2, Flag, AlertTriangle)
+- Larger count numbers and better spacing
+- Enhanced hover effects matching RecordCard
+- Simplified header text
+
+**Design Choices**:
+- Consistent with other components
+- Visual-only changes, no behavior modifications
+- Icons provide quick visual recognition
+- Better readability and visual impact

@@ -10,6 +10,7 @@ import {
 import { Badge, badgeVariants } from "@/components/ui/badge";
 import type { VariantProps } from "class-variance-authority";
 import { Button } from "@/components/ui/button";
+import type { KeyboardEvent } from "react";
 
 import type { RecordItem } from "@/app/interview/types";
 
@@ -35,8 +36,21 @@ const statusToVariant: Record<
 };
 
 export default function RecordCard({ record, onSelect }: RecordCardProps) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect(record);
+    }
+  };
+
   return (
-    <Card className="overflow-hidden hover:shadow-sm transition-shadow">
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect(record)}
+      onKeyDown={handleKeyDown}
+      className="overflow-hidden cursor-pointer hover:shadow-md hover:border-muted-foreground/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200"
+    >
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b">
         <div>
           <CardTitle className="text-base sm:text-lg tracking-tight">
@@ -48,7 +62,7 @@ export default function RecordCard({ record, onSelect }: RecordCardProps) {
         </div>
         <CardAction>
           <Badge variant={statusToVariant[record.status]}>
-            {record.status}
+            {record.status.replaceAll("_", " ").toLowerCase()}
           </Badge>
         </CardAction>
       </CardHeader>
@@ -60,7 +74,13 @@ export default function RecordCard({ record, onSelect }: RecordCardProps) {
         </CardContent>
       )}
       <CardFooter className="border-t pt-4 flex justify-end">
-        <Button variant="secondary" onClick={() => onSelect(record)}>
+        <Button
+          variant="secondary"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(record);
+          }}
+        >
           Review
         </Button>
       </CardFooter>
