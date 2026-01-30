@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/select";
 
 import type { RecordItem, RecordStatus } from "../types";
+import { useRecords } from "../context/RecordsContext";
 
 interface RecordDetailDialogProps {
   record: RecordItem;
@@ -37,14 +39,67 @@ export default function RecordDetailDialog({
   record,
   onClose,
 }: RecordDetailDialogProps) {
+  const { updateRecord } = useRecords();
   const [status, setStatus] = useState<RecordStatus>(record.status);
   const [note, setNote] = useState<string>(record.note ?? "");
+  const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const statusOptions: RecordStatus[] = [
     "pending",
     "approved",
     "flagged",
     "needs_revision",
   ];
+
+  const trimmedNote = note.trim();
+  const requiresNote = status === "flagged" || status === "needs_revision";
+  const isValid = !requiresNote || (requiresNote && trimmedNote.length > 0);
+
+  const handleSave = async () => {
+    // Clear Previous validation errors
+    setValidationError(null);
+
+    // Validate note requirement
+    if (requiresNote && trimmedNote.length === 0) {
+      setValidationError("Note is required for flagged or needs revision statuses.");
+      return;
+    }
+
+    // check if anything changed
+    const statusChanged = status !== record.status;
+    const noteChanged = trimmedNote !== (record.note ?? "").trim();
+    const isDirty = statusChanged || noteChanged;
+
+    if (!isDirty) {
+      onClose();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await updateRecord(record.id, {
+        status: statusChanged ? status : undefined,
+        note: noteChanged ? trimmedNote : undefined,
+      });
+
+      toast.success("Record updated successfully");
+      onClose();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to update record";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange  = (value: RecordStatus) => {
+    setStatus(value);
+    // Clear validation error when status changes
+    if (validationError) {
+      setValidationError(null);
+    }
+  };
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -62,7 +117,8 @@ export default function RecordDetailDialog({
             <label className="block text-sm font-medium mb-1">Status</label>
             <Select
               value={status}
-              onValueChange={(value) => setStatus(value as RecordStatus)}
+              onValueChange={handleStatusChange}
+              disabled={loading}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select status" />
@@ -70,7 +126,7 @@ export default function RecordDetailDialog({
               <SelectContent>
                 {statusOptions.map((option) => (
                   <SelectItem key={option} value={option}>
-                    {option}
+                    {option.replaceAll("_", " ")}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -79,23 +135,43 @@ export default function RecordDetailDialog({
           <div>
             <label className="block text-sm font-medium mb-1">
               Reviewer note
+              {requiresNote && (
+                <span className="text-destructive ml-1">
+                  *
+                </span>
+              )}
             </label>
             <Textarea
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={(e) => {
+                setNote(e.target.value);
+                if (validationError) {
+                  setValidationError(null);
+                }
+              }}
               placeholder="Add a note..."
-              className="min-h-24"
+              className={`min-h-24 ${validationError ? "border-destructive" : ""}`}
+              disabled={loading}
             />
-            <p className="mt-1 text-xs text-muted-foreground">
-              Notes help other reviewers understand decisions.
-            </p>
+            {validationError && (
+              <p className="mt-1 text-xs text-destructive">{validationError}</p>
+            )}
+            {!validationError && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                {requiresNote
+                  ? "A note is required for Flagged or Needs Revision status."
+                  : "Notes help other reviewers understand decisions."}
+              </p>
+            )}
           </div>
         </div>
         <DialogFooter className="mt-6">
-          <Button variant="secondary" onClick={() => onClose()}>
+          <Button variant="secondary" onClick={onClose} disabled={loading}>
             Close
           </Button>
-          <Button variant="default">Save</Button>
+          <Button variant="default" onClick={handleSave} disabled={loading || !isValid}>
+            {loading ? "Saving..." : "Save"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -35,15 +35,15 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 **Definition of Done**: Save persists via context, validation blocks invalid saves, and UI updates without refresh.
 
 **Tasks**:
-- [ ] Wire up Save button in `RecordDetailDialog.tsx`
-- [ ] Add validation: require note for Flagged/Needs Revision statuses
-- [ ] Make note optional for Approved status
-- [ ] Integrate with `updateRecord` from `RecordsContext`
-- [ ] Add loading state during API call
-- [ ] Show inline validation errors
-- [ ] Show success/error feedback (toast or inline)
-- [ ] Close dialog only on successful save
-- [ ] Ensure UI updates propagate to list, summary, and history
+- [x] Wire up Save button in `RecordDetailDialog.tsx`
+- [x] Add validation: require note for Flagged/Needs Revision statuses
+- [x] Make note optional for Approved status
+- [x] Integrate with `updateRecord` from `RecordsContext`
+- [x] Add loading state during API call
+- [x] Show inline validation errors
+- [x] Show success/error feedback (toast or inline)
+- [x] Close dialog only on successful save
+- [x] Ensure UI updates propagate to list, summary, and history
 
 **Files to modify**:
 - `src/app/interview/components/RecordDetailDialog.tsx`
@@ -62,12 +62,12 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 **Definition of Done**: Filter works reliably, persists after updates, handles edge cases (records changing status), and is accessible.
 
 **Tasks**:
-- [ ] Verify filter works correctly with all status options
-- [ ] Ensure filter persists after record updates
-- [ ] Test edge case: record changes status and leaves current filtered view
-- [ ] Verify default "all" state is clear and accessible
-- [ ] Ensure filter doesn't reset selection unnecessarily
-- [ ] Test accessibility (keyboard navigation, focus states)
+- [x] Verify filter works correctly with all status options
+- [x] Ensure filter persists after record updates
+- [x] Test edge case: record changes status and leaves current filtered view
+- [x] Verify default "all" state is clear and accessible
+- [x] Ensure filter doesn't reset selection unnecessarily
+- [x] Test accessibility (keyboard navigation, focus states)
 
 **Files to verify/modify**:
 - `src/app/interview/components/RecordFilter.tsx`
@@ -88,11 +88,11 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 **Definition of Done**: Counts update reactively, handle zero/large numbers gracefully, and remain accurate after status changes.
 
 **Tasks**:
-- [ ] Verify counts update reactively when records change
-- [ ] Test with zero counts for each status
-- [ ] Test with large numbers (formatting)
-- [ ] Verify empty state handling
-- [ ] Ensure counts are accurate after status changes
+- [x] Verify counts update reactively when records change
+- [x] Test with zero counts for each status
+- [x] Test with large numbers (formatting)
+- [x] Verify empty state handling
+- [x] Ensure counts are accurate after status changes
 
 **Files to verify**:
 - `src/app/interview/components/RecordSummary.tsx`
@@ -112,13 +112,13 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 **Definition of Done**: Entries created on status change, ordered most-recent first, readable format, scrollable, and handles edge cases correctly.
 
 **Tasks**:
-- [ ] Fix history ordering: currently appends (oldest→newest), need most-recent first
-- [ ] Verify history entries are created on status change
-- [ ] Verify entries include: record id, timestamp, previous → new status, note
-- [ ] Verify timestamp formatting is locale-friendly
-- [ ] Test scrollable behavior when history is long
-- [ ] Verify Clear functionality works correctly
-- [ ] Test edge cases: status change without note, status change to same status (should not create entry)
+- [x] Fix history ordering: currently appends (oldest→newest), need most-recent first
+- [x] Verify history entries are created on status change
+- [x] Verify entries include: record id, timestamp, previous → new status, note
+- [x] Verify timestamp formatting is locale-friendly
+- [x] Test scrollable behavior when history is long
+- [x] Verify Clear functionality works correctly
+- [x] Test edge cases: status change without note, status change to same status (should not create entry)
 
 **Files to verify/modify**:
 - `src/app/interview/context/RecordsContext.tsx` (history tracking logic - fix ordering)
