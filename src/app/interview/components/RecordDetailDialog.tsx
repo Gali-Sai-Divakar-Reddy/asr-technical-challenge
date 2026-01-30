@@ -93,8 +93,15 @@ export default function RecordDetailDialog({
     }
   };
 
-  const handleStatusChange  = (value: RecordStatus) => {
+  const handleStatusChange = (value: RecordStatus) => {
+    const previousStatus = status;
     setStatus(value);
+    
+    // Clear note only when status actually changes (not when selecting current status)
+    if (value !== previousStatus) {
+      setNote("");
+    }
+    
     // Clear validation error when status changes
     if (validationError) {
       setValidationError(null);

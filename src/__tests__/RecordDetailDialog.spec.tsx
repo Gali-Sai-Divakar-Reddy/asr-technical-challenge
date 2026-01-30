@@ -82,6 +82,65 @@ describe("RecordDetailDialog", () => {
 
       expect(textarea).toHaveValue("This is a test note");
     });
+
+    it("clears note when status changes", async () => {
+      const user = userEvent.setup();
+      const recordWithNote: RecordItem = {
+        ...sampleRecord,
+        note: "Existing note",
+      };
+      render(<RecordDetailDialog record={recordWithNote} onClose={onClose} />);
+
+      // Verify note is initially shown
+      const textarea = screen.getByPlaceholderText("Add a note...");
+      expect(textarea).toHaveValue("Existing note");
+
+      // Change status to a different one
+      const selectTrigger = screen.getByRole("combobox");
+      await user.click(selectTrigger);
+      const approvedOption = screen.getByText("approved");
+      await user.click(approvedOption);
+
+      // Wait for status to update
+      await waitFor(() => {
+        expect(selectTrigger).toHaveTextContent("approved");
+      });
+
+      // Verify note is cleared when status changes
+      expect(textarea).toHaveValue("");
+    });
+
+    it("does not clear note when selecting the same status", async () => {
+      const user = userEvent.setup();
+      const recordWithNote: RecordItem = {
+        ...sampleRecord,
+        status: "pending",
+        note: "Existing note",
+      };
+      render(<RecordDetailDialog record={recordWithNote} onClose={onClose} />);
+
+      // Verify note is initially shown
+      const textarea = screen.getByPlaceholderText("Add a note...");
+      expect(textarea).toHaveValue("Existing note");
+
+      // Select the same status (pending) - use getAllByRole to find the option
+      const selectTrigger = screen.getByRole("combobox");
+      await user.click(selectTrigger);
+      
+      // Find the pending option in the dropdown (not the trigger)
+      const options = screen.getAllByRole("option");
+      const pendingOption = options.find(opt => opt.textContent === "pending");
+      expect(pendingOption).toBeDefined();
+      await user.click(pendingOption!);
+
+      // Wait for dropdown to close
+      await waitFor(() => {
+        expect(selectTrigger).toHaveTextContent("pending");
+      });
+
+      // Verify note is NOT cleared when selecting the same status
+      expect(textarea).toHaveValue("Existing note");
+    });
   });
 
   describe("Validation", () => {
