@@ -30,7 +30,7 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ### 1. Review Actions (via dropdown)
 
-**Status**: ⏳ Not Started
+**Status**: ✅ Done
 
 **Definition of Done**: Save persists via context, validation blocks invalid saves, and UI updates without refresh.
 
@@ -57,7 +57,7 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ### 2. Filter - Verification & Edge Cases
 
-**Status**: ✅ Implemented (needs verification/tests)
+**Status**: ✅ Done
 
 **Definition of Done**: Filter works reliably, persists after updates, handles edge cases (records changing status), and is accessible.
 
@@ -83,7 +83,7 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ### 3. Summary - Verification & Edge Cases
 
-**Status**: ✅ Implemented (needs verification/tests)
+**Status**: ✅ Done
 
 **Definition of Done**: Counts update reactively, handle zero/large numbers gracefully, and remain accurate after status changes.
 
@@ -107,7 +107,7 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ### 4. History - Verification & Edge Cases
 
-**Status**: ✅ Implemented (needs verification/tests)
+**Status**: ✅ Done
 
 **Definition of Done**: Entries created on status change, ordered most-recent first, readable format, scrollable, and handles edge cases correctly.
 
@@ -125,9 +125,8 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 - `src/app/interview/components/HistoryLog.tsx` (display)
 
 **Notes**:
-- **History ordering decision needed**: Context currently appends `setHistory((prev) => [...prev, entry])` which produces oldest→newest
-  - **Option 1**: Prepend in context: `setHistory(prev => [entry, ...prev])` (recommended - cleaner)
-  - **Option 2**: Reverse render in HistoryLog: `history.slice().reverse().map()` (keeps append, renders reversed)
+- **History ordering fixed**: Context currently appends `setHistory((prev) => [...prev, entry])` which produces oldest→newest
+  - Implemented Prepend in context: `setHistory(prev => [entry, ...prev])` in `RecordsContext.tsx`
 - History tracking already implemented in `updateRecord` - only creates entry when status actually changes
 - HistoryLog uses `toLocaleString()` for timestamp formatting
 
@@ -203,10 +202,11 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 ## Notes & Decisions
 
 ### Design Decisions
-- **Toast vs Inline Messages**: [Decision pending]
-- **Error Handling Strategy**: [Decision pending]
-- **Loading States**: [Decision pending]
-- **History Ordering**: [Decision pending - Option 1: Prepend in context vs Option 2: Reverse render]
+- **Toast vs Inline Messages**: Using toast notifications (sonner) for success/error feedback
+- **Error Handling Strategy**: Errors caught in updateRecord, displayed via toast, error state set on context
+- **Loading States**: Loading state managed in RecordDetailDialog during API calls
+- **History Ordering**: **Decided** - Prepend in context (`setHistory(prev => [entry, ...prev])`) for cleaner implementation
+
 
 ### Issues & Solutions
 - [Issue description]
@@ -221,10 +221,10 @@ This document tracks the implementation progress for Phase 2 of the ASR Technica
 
 ## Acceptance Criteria Status
 
-- [ ] **Review actions via dropdown**: Status selection updates record, validation works, persistence via PATCH, UI updates everywhere
-- [ ] **Filter**: Reliable filtering, persists after updates, clear default, accessible
-- [ ] **Summary**: Accurate counts, reactive updates, handles empty states
-- [ ] **History**: Entries created on status change, readable format, scrollable, clearable
+- [x] **Review actions via dropdown**: Status selection updates record, validation works, persistence via PATCH, UI updates everywhere
+- [x] **Filter**: Reliable filtering, persists after updates, clear default, accessible
+- [x] **Summary**: Accurate counts, reactive updates, handles empty states
+- [x] **History**: Entries created on status change, readable format, scrollable, clearable
 - [ ] **Tests**: Unit tests for update/validation, component tests for dialog interactions, filter test
 
 ---
