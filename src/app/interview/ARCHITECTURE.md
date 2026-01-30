@@ -237,6 +237,29 @@ const [fltr, setFltr] = useState(...); // Should be: filterStatus
 
 ---
 
+## Production Considerations
+
+### Handling Large History Logs
+
+**Current:** History is stored in-memory and grows unbounded during a session. This works for the exercise but needs optimization for production.
+
+**Production Solutions:**
+- **Virtualization**: Use `react-window` or `react-virtuoso` to render only visible entries
+- **Pagination**: Load entries in chunks (50-100 at a time) with "Load More" or infinite scroll
+- **Time-based filtering**: Filter by date range to reduce data transfer
+- **Server-side storage**: Move history to database with indexed queries and cursor-based pagination
+
+### Persistence Strategy
+
+**Current:** History is ephemeral—lost on page refresh or server restart.
+
+**Production Approach:**
+- **Database persistence**: Store in PostgreSQL/MySQL with a `record_history` table indexed on `record_id` and `timestamp`
+- **Retention policy**: Archive entries older than 1-2 years to cold storage
+- Enables audit trails, compliance, and cross-session history
+
+---
+
 ## Proposed File Structure
 
 ```
